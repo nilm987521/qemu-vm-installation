@@ -1,0 +1,81 @@
+#cloud-config
+
+# 系統基本設定
+hostname: fedora-cloud-vm
+fqdn: fedora-cloud-vm.local
+manage_etc_hosts: true
+preserve_hostname: false
+
+# 用戶帳戶設定
+users:
+  - name: clouduser
+    groups: 
+      - wheel
+      - docker
+      - systemd-journal
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    plain_text_passwd: pass123
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDExample... # 您的SSH公鑰
+
+# 禁用 root 登入
+disable_root: true
+ssh_pwauth: true
+
+# 系統更新和套件安裝
+package_update: true
+package_upgrade: true
+packages:
+  - curl
+  - wget
+  - git
+  - vim
+  - htop
+  - tree
+  - unzip
+  - tar
+  - docker
+  - docker-compose
+  - gcc
+  - make
+  - gdb
+
+# DNF 倉庫配置
+yum_repos:
+  docker-ce:
+    name: Docker CE Stable
+    baseurl: https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+    enabled: true
+    gpgcheck: true
+    gpgkey: https://download.docker.com/linux/fedora/gpg
+
+# 建立檔案和目錄
+write_files:
+  - path: /etc/ssh/sshd_config.d/99-cloud-init.conf
+    content: |
+      # Cloud-init SSH 配置
+      PasswordAuthentication yes
+      PubkeyAuthentication yes
+      PermitRootLogin no
+      AuthorizedKeysFile .ssh/authorized_keys
+      ChallengeResponseAuthentication no
+      UsePAM yes
+    permissions: '0644'
+    owner: root:root
+
+  - path: /etc/motd
+    content: |
+      ===============================================
+      歡迎使用 Fedora Cloud 實例！
+      ===============================================
+      
+      系統資訊：
+      - 主機名: fedora-cloud-vm
+      - 用戶: clouduser
+      - 已安裝: Docker 工具
+      
+      ===============================================
+    permissions: '0644'
+    owner: root:root
