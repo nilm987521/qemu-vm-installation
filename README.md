@@ -33,7 +33,7 @@ mkisofs -output cloud-init.iso -volid cidata -joliet -rock {user-data,meta-data}
 qemu-system-x86_64 \
   -name "fedora-cloud-vm" \
   -machine type=q35 \
-  -accel tcg,thread=multi \
+  -accel tcg,thread=multi,tb-size=64 \
   -cpu max,check=off \
   -smp cores=4,threads=1,sockets=1 \
   -m 4096 \
