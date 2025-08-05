@@ -1,4 +1,4 @@
-# Apple Silicon 或 無硬體支援的情境 安裝x64虛擬機
+# Mac M系列晶片(Apple Silicon) 或 Windows無硬體支援的情境 安裝x64虛擬機
 > 可以用 `docker` 跟 `gdb`
 
 ## 1. 安裝必要工具
@@ -24,7 +24,10 @@ mkisofs -output cloud-init.iso -volid cidata -joliet -rock {user-data,meta-data}
 ```
 
 ## 6. 啟動虛擬機
+> 請留意倒數第二行之設定 `hostfwd=tcp::2222-:22` 為PortForward
 ```bash
+# 以下為bash範例，powershell 不支援使用 '\' 作為換行符號
+# windows使用者建議移除換行，且把所有 `\`移除
 qemu-system-x86_64 \
   -name "fedora-cloud-vm" \
   -machine type=q35 \
@@ -38,4 +41,10 @@ qemu-system-x86_64 \
   -drive file=cloud-init.iso,format=raw,if=virtio,readonly=on \
   -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::8080-:80 \
   -device virtio-net,netdev=net0
+```
+
+## 7. SSH進入虛擬機
+> 上一步指令啟動虛擬機後，雖然會有新視窗可以輸入指令，但他不支援中文顯示，建議使用 ssh 登入
+```bash
+ssh -p 2222 clouduser@localhost
 ```
