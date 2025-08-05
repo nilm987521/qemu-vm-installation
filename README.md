@@ -1,6 +1,8 @@
 # Mac M系列晶片(Apple Silicon) 或 Windows無硬體支援的情境 安裝x64虛擬機
 > 可以用 `docker` 跟 `gdb`
 
+> 經測試，虛擬機僅有1/4的性能
+
 ## 1. 安裝必要工具
 ```bash
 brew install qemu cdrtools    # MacOS
